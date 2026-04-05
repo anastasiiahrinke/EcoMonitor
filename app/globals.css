@@ -1,0 +1,367 @@
+:root {
+  --bg: #07090d;
+  --surface: #10141b;
+  --surface-elevated: #171c25;
+  --fg: #f2f5fa;
+  --fg-soft: #b4bfce;
+  --accent: #79c2ff;
+  --accent-strong: #49a7ff;
+  --border: #2b3342;
+  --danger: #ff6b6b;
+  --warning: #ffb052;
+  --radius-m: 16px;
+  --radius-l: 22px;
+  --shadow-soft: 0 12px 40px rgba(0, 0, 0, 0.35);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  font-family: var(--font-body), "Segoe UI", sans-serif;
+  background:
+    radial-gradient(1200px 700px at 10% -10%, rgba(108, 169, 255, 0.18), transparent 45%),
+    radial-gradient(900px 600px at 100% 0%, rgba(255, 255, 255, 0.06), transparent 45%),
+    linear-gradient(180deg, #07090d 0%, #090d14 45%, #07090d 100%);
+  color: var(--fg);
+  line-height: 1.55;
+  letter-spacing: 0.01em;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: #c6e4ff;
+}
+
+/* Navigation */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  height: 68px;
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  border-bottom: 1px solid rgba(176, 197, 224, 0.14);
+  background: rgba(9, 12, 18, 0.72);
+  backdrop-filter: blur(12px);
+}
+
+.nav-logo {
+  color: var(--fg);
+  font-family: var(--font-display), "Segoe UI", sans-serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  list-style: none;
+}
+
+.nav-links a {
+  color: var(--fg-soft);
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.nav-links a:hover {
+  color: var(--fg);
+  text-decoration: none;
+}
+
+/* Layout */
+.container {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 2.2rem 1rem;
+  animation: fade-in 420ms ease-out;
+}
+
+.page-title {
+  font-family: var(--font-display), "Segoe UI", sans-serif;
+  font-size: clamp(1.8rem, 2.2vw, 2.35rem);
+  margin-bottom: 1.6rem;
+  letter-spacing: 0.015em;
+}
+
+h2,
+h3 {
+  font-family: var(--font-display), "Segoe UI", sans-serif;
+  font-weight: 600;
+}
+
+/* Cards */
+.card {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+  border: 1px solid var(--border);
+  border-radius: var(--radius-l);
+  padding: 1.4rem;
+  margin-bottom: 1rem;
+  box-shadow: var(--shadow-soft);
+}
+
+.card h3 {
+  margin-bottom: 0.5rem;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1rem;
+}
+
+/* Station card */
+.station-card {
+  position: relative;
+  transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+}
+
+.station-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(143, 194, 255, 0.35);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.42);
+}
+
+.station-type {
+  display: inline-block;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  background: rgba(121, 194, 255, 0.16);
+  color: #beddff;
+  margin-bottom: 0.7rem;
+}
+
+.station-meta {
+  font-size: 0.88rem;
+  color: var(--fg-soft);
+  margin-top: 0.45rem;
+}
+
+/* AQI badge */
+.aqi-badge {
+  display: inline-block;
+  padding: 0.33rem 0.85rem;
+  border-radius: 999px;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+/* Stats section */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01));
+  border: 1px solid var(--border);
+  border-radius: var(--radius-m);
+  padding: 1.1rem;
+  text-align: center;
+}
+
+.stat-value {
+  font-family: var(--font-display), "Segoe UI", sans-serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #d8ecff;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: var(--fg-soft);
+  margin-top: 0.25rem;
+}
+
+/* Table */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: rgba(14, 18, 25, 0.9);
+  border-radius: var(--radius-m);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.data-table th,
+.data-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.data-table th {
+  background: rgba(121, 194, 255, 0.08);
+  font-weight: 600;
+  font-size: 0.84rem;
+  color: #cde7ff;
+}
+
+.data-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Bar chart */
+.bar-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.75rem;
+  height: 200px;
+  padding: 1rem 0;
+}
+
+.bar-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.bar {
+  width: 100%;
+  max-width: 60px;
+  background: linear-gradient(180deg, #89cbff 0%, #4aa8ff 100%);
+  border-radius: 8px 8px 0 0;
+  transition: height 0.3s;
+}
+
+.bar-label {
+  font-size: 0.75rem;
+  color: var(--fg-soft);
+  margin-top: 0.5rem;
+}
+
+.bar-value {
+  font-size: 0.72rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+/* Info page */
+.info-section {
+  margin-bottom: 2rem;
+}
+
+.info-section h2 {
+  color: #d8ecff;
+  margin-bottom: 0.75rem;
+  font-size: 1.25rem;
+}
+
+.info-section p,
+.info-section li {
+  margin-bottom: 0.5rem;
+  color: var(--fg-soft);
+}
+
+.info-section ul {
+  padding-left: 1.5rem;
+}
+
+/* Pollutant cards */
+.pollutant-card {
+  border-left: 4px solid rgba(121, 194, 255, 0.65);
+}
+
+.pollutant-card h3 {
+  color: #d9ecff;
+}
+
+.pollutant-card .limit {
+  font-size: 0.85rem;
+  color: var(--danger);
+  font-weight: 600;
+}
+
+/* Status indicator */
+.status-active {
+  color: #86f2ad;
+  font-weight: 600;
+}
+
+.status-inactive {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+/* Detail page back link */
+.back-link {
+  display: inline-block;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 1.8rem 1rem;
+  color: #8e9ab0;
+  font-size: 0.82rem;
+  border-top: 1px solid rgba(176, 197, 224, 0.14);
+  margin-top: 2rem;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 760px) {
+  .nav {
+    padding: 0 1rem;
+    height: auto;
+    min-height: 64px;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-content: center;
+    padding-top: 0.6rem;
+    padding-bottom: 0.6rem;
+  }
+
+  .nav-links {
+    width: 100%;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding-bottom: 0.2rem;
+  }
+
+  .nav-links a {
+    font-size: 0.88rem;
+  }
+
+  .container {
+    padding-top: 1.6rem;
+  }
+
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
+}
