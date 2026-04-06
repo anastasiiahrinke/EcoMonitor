@@ -15,6 +15,8 @@ function generateMeasurements(
     "station-5": { pm25: 45, pm10: 70, no2: 55, so2: 18, co: 1.5, o3: 35 },
     "station-6": { pm25: 50, pm10: 75, no2: 58, so2: 22, co: 1.3, o3: 28 },
     "station-7": { pm25: 25, pm10: 40, no2: 30, so2: 10, co: 0.6, o3: 50 },
+    "station-8": { pm25: 8, pm10: 12, no2: 7, so2: 3, co: 0.2, o3: 18 },
+    "station-9": { pm25: 95, pm10: 140, no2: 110, so2: 38, co: 2.1, o3: 24 },
   };
 
   const base = stationProfiles[stationId] ?? stationProfiles["station-1"]!;
@@ -59,6 +61,7 @@ const allMeasurements: Measurement[] = [];
 const stationIds = [
   "station-1", "station-2", "station-3", "station-4",
   "station-5", "station-6", "station-7",
+  "station-8", "station-9",
 ];
 
 for (const id of stationIds) {

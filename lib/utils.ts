@@ -2,8 +2,8 @@ import { AirQualityData, Measurement } from "@/types";
 
 export function getAqiLevel(aqi: number): { label: string; color: string } {
   if (aqi <= 50) return { label: "Добре", color: "#4caf50" };
-  if (aqi <= 100) return { label: "Помірно", color: "#ffeb3b" };
-  if (aqi <= 150) return { label: "Шкідливо для чутливих", color: "#ff9800" };
+  if (aqi <= 100) return { label: "Помірно", color: "#c5b30c" };
+  if (aqi <= 150) return { label: "Шкідливо для чутливих", color: "#d66407" };
   if (aqi <= 200) return { label: "Шкідливо", color: "#f44336" };
   return { label: "Дуже шкідливо", color: "#9c27b0" };
 }

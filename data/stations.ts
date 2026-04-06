@@ -64,4 +64,22 @@ export const stations: MonitoringStation[] = [
     address: "просп. Оболонський, 22, Київ",
     active: true,
   },
+  {
+    id: "station-8",
+    name: "Пуща-Водиця",
+    latitude: 50.5064,
+    longitude: 30.4231,
+    type: "rural",
+    address: "Пуща-Водицький ліс, Київ",
+    active: true,
+  },
+  {
+    id: "station-9",
+    name: "Південний промвузол",
+    latitude: 50.3898,
+    longitude: 30.6942,
+    type: "industrial",
+    address: "промислова зона, вул. Енергетиків, Київ",
+    active: true,
+  },
 ];
