@@ -2,10 +2,17 @@ import Link from "next/link";
 import { stations } from "@/data/stations";
 import { measurements } from "@/data/measurements";
 import { calculateAverage, getAqiLevel } from "@/lib/utils";
+import HomeMapSection from "@/app/components/HomeMapSection";
 
 export const dynamic = "force-dynamic";
 
-export default async function HomePage() {
+interface HomePageProps {
+  searchParams: Promise<{ page?: string }>;
+}
+
+export default async function HomePage({ searchParams }: HomePageProps) {
+  const { page: pageParam } = await searchParams;
+  const pageSize = 9;
   const activeStations = stations.filter((s) => s.active);
   const totalMeasurements = measurements.length;
 
@@ -20,6 +27,23 @@ export default async function HomePage() {
     activeStations.some((s) => s.id === m.stationId)
   );
   const overallAvg = calculateAverage(allMeasurementsFlat);
+
+  const stationAqiMap = Object.fromEntries(
+    allLatest
+      .filter(({ latest }) => latest !== null)
+      .map(({ station, latest }) => [station.id, latest!.airQuality.aqi])
+  );
+
+  const overallLevel = overallAvg ? getAqiLevel(overallAvg.aqi) : null;
+  const totalStationPages = Math.max(1, Math.ceil(allLatest.length / pageSize));
+  const currentPage = Math.min(
+    totalStationPages,
+    Math.max(1, Number.parseInt(pageParam ?? "1", 10) || 1)
+  );
+  const startIndex = (currentPage - 1) * pageSize;
+  const pagedStations = allLatest.slice(startIndex, startIndex + pageSize);
+  const prevPage = Math.max(1, currentPage - 1);
+  const nextPage = Math.min(totalStationPages, currentPage + 1);
 
   return (
     <div className="container">
@@ -38,20 +62,40 @@ export default async function HomePage() {
           <div className="stat-value">{totalMeasurements}</div>
           <div className="stat-label">Вимірювань</div>
         </div>
-        {overallAvg && (
+        {overallAvg && overallLevel && (
           <div className="stat-card">
-            <div className="stat-value">{overallAvg.aqi}</div>
-            <div className="stat-label">Середній AQI</div>
+            <div className="stat-value" style={{ color: overallLevel.color }}>
+              {overallAvg.aqi}
+            </div>
+            <div className="stat-label">Середній AQI: {overallLevel.label}</div>
           </div>
         )}
       </div>
 
+      <h2 style={{ marginBottom: "1rem" }}>Карта станцій</h2>
+      <HomeMapSection
+        stations={activeStations}
+        stationAqiMap={stationAqiMap}
+        measurements={allMeasurementsFlat}
+      />
+
       <h2 style={{ marginBottom: "1rem" }}>Станції моніторингу</h2>
+      <div className="stations-page-meta">
+        <span>
+          Показано {startIndex + 1}-{Math.min(startIndex + pageSize, allLatest.length)} з {allLatest.length}
+        </span>
+        <span>Сторінка {currentPage} з {totalStationPages}</span>
+      </div>
       <div className="card-grid">
-        {allLatest.map(({ station, latest }) => {
+        {pagedStations.map(({ station, latest }) => {
           const aqiInfo = latest ? getAqiLevel(latest.airQuality.aqi) : null;
+
           return (
-            <Link key={station.id} href={`/station/${station.id}`} style={{ textDecoration: "none", color: "inherit" }}>
+            <Link
+              key={station.id}
+              href={`/station/${station.id}`}
+              style={{ textDecoration: "none", color: "inherit" }}
+            >
               <div className="card station-card">
                 <span className="station-type">{station.type}</span>
                 <h3>{station.name}</h3>
@@ -60,7 +104,7 @@ export default async function HomePage() {
                   Координати: {station.latitude}, {station.longitude}
                 </p>
                 <p className="station-meta">
-                  Статус:{" "}
+                  Статус: {" "}
                   <span className={station.active ? "status-active" : "status-inactive"}>
                     {station.active ? "Активна" : "Неактивна"}
                   </span>
@@ -77,6 +121,40 @@ export default async function HomePage() {
           );
         })}
       </div>
+      {totalStationPages > 1 && (
+        <div className="pagination-row">
+          <Link
+            href={`/?page=${prevPage}`}
+            aria-disabled={currentPage === 1}
+            className={`pagination-button${currentPage === 1 ? " is-disabled" : ""}`}
+          >
+            Назад
+          </Link>
+
+          <div className="pagination-pages">
+            {Array.from({ length: totalStationPages }, (_, index) => {
+              const pageNumber = index + 1;
+              return (
+                <Link
+                  key={pageNumber}
+                  href={`/?page=${pageNumber}`}
+                  className={`pagination-button${pageNumber === currentPage ? " is-active" : ""}`}
+                >
+                  {pageNumber}
+                </Link>
+              );
+            })}
+          </div>
+
+          <Link
+            href={`/?page=${nextPage}`}
+            aria-disabled={currentPage === totalStationPages}
+            className={`pagination-button${currentPage === totalStationPages ? " is-disabled" : ""}`}
+          >
+            Далі
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

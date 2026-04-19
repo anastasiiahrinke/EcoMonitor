@@ -17,6 +17,14 @@ function generateMeasurements(
     "station-7": { pm25: 25, pm10: 40, no2: 30, so2: 10, co: 0.6, o3: 50 },
     "station-8": { pm25: 8, pm10: 12, no2: 7, so2: 3, co: 0.2, o3: 18 },
     "station-9": { pm25: 95, pm10: 140, no2: 110, so2: 38, co: 2.1, o3: 24 },
+    "station-10": { pm25: 22, pm10: 36, no2: 26, so2: 7, co: 0.5, o3: 48 },
+    "station-11": { pm25: 16, pm10: 28, no2: 18, so2: 6, co: 0.4, o3: 52 },
+    "station-12": { pm25: 18, pm10: 30, no2: 20, so2: 6, co: 0.45, o3: 49 },
+    "station-13": { pm25: 40, pm10: 66, no2: 52, so2: 17, co: 1.1, o3: 33 },
+    "station-14": { pm25: 58, pm10: 88, no2: 72, so2: 20, co: 1.4, o3: 29 },
+    "station-15": { pm25: 78, pm10: 120, no2: 96, so2: 30, co: 1.8, o3: 25 },
+    "station-16": { pm25: 70, pm10: 105, no2: 84, so2: 28, co: 1.7, o3: 26 },
+    "station-17": { pm25: 24, pm10: 38, no2: 24, so2: 9, co: 0.55, o3: 46 },
   };
 
   const base = stationProfiles[stationId] ?? stationProfiles["station-1"]!;
@@ -61,7 +69,9 @@ const allMeasurements: Measurement[] = [];
 const stationIds = [
   "station-1", "station-2", "station-3", "station-4",
   "station-5", "station-6", "station-7",
-  "station-8", "station-9",
+  "station-8", "station-9", "station-10", "station-11",
+  "station-12", "station-13", "station-14", "station-15",
+  "station-16", "station-17",
 ];
 
 for (const id of stationIds) {
