@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { measurements } from "@/data/measurements";
 import { PaginatedResponse, Measurement, ApiError, AirQualityData } from "@/types";
+import logger from "@/lib/logger";
 
 export async function GET(request: NextRequest) {
   try {
+    logger.info({ msg: "GET /api/measurements", query: Object.fromEntries(request.nextUrl.searchParams) });
     const { searchParams } = request.nextUrl;
     const stationId = searchParams.get("stationId");
     const startDate = searchParams.get("startDate");
@@ -19,6 +21,7 @@ export async function GET(request: NextRequest) {
         error: { code: "MISSING_PARAM", message: "Параметр stationId є обов'язковим" },
         timestamp: new Date().toISOString(),
       };
+      logger.warn({ msg: "Missing stationId param in GET /api/measurements" });
       return NextResponse.json(error, { status: 400 });
     }
 
@@ -60,6 +63,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(response);
   } catch {
+    logger.error({ msg: "Unhandled error in GET /api/measurements" });
     const error: ApiError = {
       success: false,
       error: { code: "INTERNAL_ERROR", message: "Внутрішня помилка сервера" },

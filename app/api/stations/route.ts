@@ -1,40 +1,54 @@
 import { NextRequest, NextResponse } from "next/server";
 import { stations } from "@/data/stations";
-import { ApiResponse, MonitoringStation, ApiError } from "@/types";
+import { measurements } from "@/data/measurements";
+import { calculateAverage } from "@/lib/utils";
+import { ApiResponse, ApiError, MonitoringStation, AirQualityData } from "@/types";
+import logger from "@/lib/logger";
 
-export async function GET(request: NextRequest) {
+interface StationDetail {
+  station: MonitoringStation;
+  latestMeasurement: AirQualityData | null;
+  averageToday: AirQualityData | null;
+}
+
+export async function GET(
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
-    const { searchParams } = request.nextUrl;
-    const type = searchParams.get("type");
-    const active = searchParams.get("active");
+    const { id } = await params;
+    logger.info({ msg: "GET /api/stations/:id", stationId: id });
+    const station = stations.find((s) => s.id === id);
 
-    let filtered = [...stations];
-
-    if (type) {
-      const validTypes = ["industrial", "urban", "suburban", "rural", "traffic"];
-      if (!validTypes.includes(type)) {
-        const error: ApiError = {
-          success: false,
-          error: { code: "INVALID_TYPE", message: `Невірний тип станції: ${type}` },
-          timestamp: new Date().toISOString(),
-        };
-        return NextResponse.json(error, { status: 400 });
-      }
-      filtered = filtered.filter((s) => s.type === type);
+    if (!station) {
+      const error: ApiError = {
+        success: false,
+        error: { code: "NOT_FOUND", message: `Станцію з id "${id}" не знайдено` },
+        timestamp: new Date().toISOString(),
+      };
+      logger.warn({ msg: "Station not found", stationId: id });
+      return NextResponse.json(error, { status: 404 });
     }
 
-    if (active !== null) {
-      filtered = filtered.filter((s) => s.active === (active === "true"));
-    }
+    const stationMeasurements = measurements
+      .filter((m) => m.stationId === id)
+      .sort((a, b) => `${b.date}T${b.time}`.localeCompare(`${a.date}T${a.time}`));
 
-    const response: ApiResponse<MonitoringStation[]> = {
+    const latest = stationMeasurements[0]?.airQuality ?? null;
+
+    const today = new Date().toISOString().split("T")[0]!;
+    const todayMeasurements = stationMeasurements.filter((m) => m.date === today);
+    const avgToday = calculateAverage(todayMeasurements);
+
+    const response: ApiResponse<StationDetail> = {
       success: true,
-      data: filtered,
+      data: { station, latestMeasurement: latest, averageToday: avgToday },
       timestamp: new Date().toISOString(),
     };
 
     return NextResponse.json(response);
   } catch {
+    logger.error({ msg: "Unhandled error in GET /api/stations/:id" });
     const error: ApiError = {
       success: false,
       error: { code: "INTERNAL_ERROR", message: "Внутрішня помилка сервера" },

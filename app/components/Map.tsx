@@ -1,10 +1,20 @@
 'use client'
 
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { MonitoringStation } from '@/types'
 import { getAqiLevel } from '@/lib/utils'
+import { trackEvent } from '@/lib/analytics'
+
+function ZoomTracker() {
+  useMapEvents({
+    zoomend(e) {
+      trackEvent({ name: 'map_zoom', zoomLevel: e.target.getZoom() })
+    },
+  })
+  return null
+}
 
 delete (L.Icon.Default.prototype as any)._getIconUrl
 L.Icon.Default.mergeOptions({
@@ -47,6 +57,7 @@ export default function Map({ stations, selectedStationId, onStationSelect, stat
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
       />
+      <ZoomTracker />
       {stations.map((station) => {
         const aqi = stationAqiMap[station.id] ?? 0
         const isSelected = selectedStationId === station.id
@@ -56,7 +67,10 @@ export default function Map({ stations, selectedStationId, onStationSelect, stat
             position={[station.latitude, station.longitude]}
             icon={createColoredIcon(isSelected ? Math.max(aqi, 1) : aqi)}
             eventHandlers={{
-              click: () => onStationSelect(station.id),
+              click: () => {
+                onStationSelect(station.id)
+                trackEvent({ name: 'map_click', stationId: station.id })
+              },
             }}
           >
             <Popup>

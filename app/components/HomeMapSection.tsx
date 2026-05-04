@@ -1,11 +1,12 @@
 'use client'
 
 import dynamicImport from 'next/dynamic'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Measurement, MonitoringStation } from '@/types'
 import PollutantPieChart from '@/app/components/charts/PieChart'
 import AqiLineChart from '@/app/components/charts/LineChart'
 import PollutantsBarChart from '@/app/components/charts/PollutantsBarChart'
+import { trackEvent } from '@/lib/analytics'
 
 const Map = dynamicImport(() => import('@/app/components/Map'), {
   ssr: false,
@@ -29,6 +30,22 @@ export default function HomeMapSection({ stations, stationAqiMap, measurements }
   const latestMeasurement = selectedMeasurements[0] ?? null
   const recentMeasurements = selectedMeasurements.slice(0, 10)
 
+  function handleStationSelect(id: string) {
+    setSelectedStationId(id)
+    const station = stations.find((s) => s.id === id)
+    if (station) {
+      trackEvent({ name: 'station_view', stationId: id, stationName: station.name })
+    }
+  }
+
+  useEffect(() => {
+    if (latestMeasurement) {
+      trackEvent({ name: 'chart_view', chartType: 'pie' })
+      trackEvent({ name: 'chart_view', chartType: 'line' })
+      trackEvent({ name: 'chart_view', chartType: 'bar' })
+    }
+  }, [latestMeasurement])
+
   return (
     <div className="dashboard-stack">
       <div className="dashboard-shell">
@@ -36,7 +53,7 @@ export default function HomeMapSection({ stations, stationAqiMap, measurements }
           <Map
             stations={stations}
             selectedStationId={selectedStationId}
-            onStationSelect={setSelectedStationId}
+            onStationSelect={handleStationSelect}
             stationAqiMap={stationAqiMap}
           />
         </div>

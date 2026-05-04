@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { IBM_Plex_Sans, Manrope } from "next/font/google";
 import "./globals.css";
+import AnalyticsProvider from "@/app/components/AnalyticsProvider";
 
 const manrope = Manrope({
   subsets: ["latin", "cyrillic"],
@@ -29,6 +30,7 @@ export default function RootLayout({
   return (
     <html lang="uk" className={`${manrope.variable} ${ibmPlexSans.variable}`}>
       <body>
+        <AnalyticsProvider />
         <nav className="nav">
           <Link href="/" className="nav-logo">EcoMonitor</Link>
           <ul className="nav-links">
